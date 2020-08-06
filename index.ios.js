@@ -1,5 +1,4 @@
-var fs = require("tns-core-modules/file-system");
-var frame = require("tns-core-modules/ui/frame");
+import { File, Frame } from "@nativescript/core";
 
 var _determineAvailability = function () {
   var isSimulator = NSProcessInfo.processInfo.environment.objectForKey("SIMULATOR_DEVICE_NAME") !== null;
@@ -11,7 +10,7 @@ var _determineAvailability = function () {
   return !isSimulator && MFMailComposeViewController.canSendMail();
 };
 
-exports.available = function () {
+export function available() {
   return new Promise(function (resolve, reject) {
     try {
       resolve(_determineAvailability());
@@ -22,7 +21,7 @@ exports.available = function () {
   });
 };
 
-exports.compose = function (arg) {
+export function compose(arg) {
   return new Promise(function (resolve, reject) {
     try {
 
@@ -31,7 +30,7 @@ exports.compose = function (arg) {
         return;
       }
 
-      var topMostFrame = frame.topmost();
+      var topMostFrame = Frame.topmost();
       if (topMostFrame) {
         var viewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
         if (viewController) {

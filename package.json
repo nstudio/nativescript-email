@@ -1,8 +1,8 @@
 {
-  "name": "nativescript-email",
-  "version": "1.6.0",
+  "name": "@nativescript/email",
+  "version": "2.0.0",
   "description": "Email plugin for your NativeScript app",
-  "main": "email",
+  "main": "index",
   "typings": "index.d.ts",
   "nativescript": {
     "platforms": {
@@ -34,8 +34,8 @@
     }
   ],
   "devDependencies": {
-    "tns-core-modules": "^6.0.4",
-    "tns-platform-declarations": "~6.0.4"
+    "@nativescript/core": "rc",
+    "@nativescript/types": "rc"
   },
   "license": "MIT",
   "bugs": "https://github.com/eddyverbruggen/nativescript-email/issues",

@@ -1,5 +1,4 @@
-var application = require("tns-core-modules/application");
-var fs = require("tns-core-modules/file-system");
+import { Application, File, Folder } from "@nativescript/core";
 
 (function () {
   _cleanAttachmentFolder();
@@ -8,12 +7,12 @@ var fs = require("tns-core-modules/file-system");
 var _determineAvailability = function () {
   var uri = android.net.Uri.fromParts("mailto", "", null);
   var intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO, uri);
-  var packageManager = application.android.context.getPackageManager();
+  var packageManager = Application.android.context.getPackageManager();
   var nrOfMailApps = packageManager.queryIntentActivities(intent, 0).size();
   return nrOfMailApps > 0;
 };
 
-exports.available = function () {
+export function available() {
   return new Promise(function (resolve, reject) {
     try {
       resolve(_determineAvailability());
@@ -24,7 +23,7 @@ exports.available = function () {
   });
 };
 
-exports.compose = function (arg) {
+export function compose(arg) {
   return new Promise(function (resolve, reject) {
     try {
 
@@ -63,7 +62,7 @@ exports.compose = function (arg) {
           var attachment = arg.attachments[a];
           var path = attachment.path;
           var fileName = attachment.fileName;
-          var uri = _getUriForPath(path, fileName, application.android.context);
+          var uri = _getUriForPath(path, fileName, Application.android.context);
 
           if (!uri) {
             reject("File not found for path: " + path);
@@ -88,7 +87,7 @@ exports.compose = function (arg) {
       mail.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
 
       // we can wire up an intent receiver but it's always the same resultCode (0, canceled) anyway
-      application.android.context.startActivity(mail);
+      Application.android.context.startActivity(mail);
       resolve(true);
     } catch (ex) {
       console.log("Error in email.compose: " + ex);
@@ -126,12 +125,12 @@ function _getUriForAbsolutePath(path) {
 
 function _getUriForAssetPath(path, fileName, ctx) {
   path = path.replace("file://", "/");
-  if (!fs.File.exists(path)) {
+  if (!File.exists(path)) {
     console.log("File does not exist: " + path);
     return null;
   }
 
-  var localFile = fs.File.fromPath(path);
+  var localFile = File.fromPath(path);
   var localFileContents = localFile.readSync(function (e) {
     error = e;
   });
@@ -168,7 +167,7 @@ function _writeBytesToFile(ctx, fileName, contents) {
   var storage = dir.toString() + "/emailcomposer";
   var cacheFileName = storage + "/" + fileName;
 
-  var toFile = fs.File.fromPath(cacheFileName);
+  var toFile = File.fromPath(cacheFileName);
   toFile.writeSync(contents, function (e) {
     error = e;
   });
@@ -181,8 +180,8 @@ function _writeBytesToFile(ctx, fileName, contents) {
 
 function _cleanAttachmentFolder() {
 
-  if (application.android.context) {
-    var dir = application.android.context.getExternalCacheDir();
+  if (Application.android.context) {
+    var dir = Application.android.context.getExternalCacheDir();
 
     if (dir === null) {
       console.log("Missing external cache dir");
@@ -190,7 +189,7 @@ function _cleanAttachmentFolder() {
     }
 
     var storage = dir.toString() + "/emailcomposer";
-    var cacheFolder = fs.Folder.fromPath(storage);
+    var cacheFolder = Folder.fromPath(storage);
     cacheFolder.clear();
   }
 }
